@@ -2,5 +2,13 @@
   "name": "@vue/share",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "module": "dist/share.esm-builder.js",
+  "license": "MIT",
+  "buildOptions": {
+    "name": "VueShare",
+    "formats": [
+      "cjs",
+      "esm"
+    ]
+  }
 }
