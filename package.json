@@ -1,0 +1,10 @@
+{
+  "name": "mini-vue",
+  "private": true,
+  "workspaces": [
+    "package/*"
+  ],
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT"
+}
