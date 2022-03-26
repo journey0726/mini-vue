@@ -1,4 +1,7 @@
 import path, { format } from 'path'
+import json from '@rollup/plugin-json'
+import ts from 'rollup-plugin-typescript2'  // ts插件
+import node_resolve from '@rollup/plugin-node-resolve'   //解析第三方模块
 
 const packagesDir = path.resolve(__dirname, 'packages')
 const packageDir = path.resolve(packagesDir, process.env.TARGET)
@@ -29,7 +32,17 @@ const outputConfig = {
 function createConfig(format, output) {
   output.name = options.name
   output.sourcemap = true
-  return output
+  return {
+    input: resolve('src/index.ts'),
+    output,
+    plugin: [
+      json(),
+      ts({
+        tsconfig: path.resolve(__dirname, 'tsconfig.json')
+      }),
+      node_resolve()
+    ]
+  }
 }
 
 const options = pkg.buildOptions
