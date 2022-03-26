@@ -16,15 +16,15 @@ const name = path.basename(packageDir)
 
 const outputConfig = {
   'esm': {
-    file: `dist/${name}.esm-builder.js`,
+    file: resolve(`dist/${name}.esm-builder.js`),
     format: 'es'
   },
   'cjs': {
-    file: `dist/${name}.cjs.js`,
+    file: resolve(`dist/${name}.cjs.js`),
     format: 'cjs'
   },
   'global': {
-    file: `dist/${name}.global.js`,
+    file: resolve(`dist/${name}.global.js`),
     format: 'iife'  //立即执行函数 ，或者给 umd
   }
 }
