@@ -1,4 +1,4 @@
-import path, { format } from 'path'
+import path from 'path'
 import json from '@rollup/plugin-json'
 import ts from 'rollup-plugin-typescript2'  // ts插件
 import node_resolve from '@rollup/plugin-node-resolve'   //解析第三方模块
@@ -38,7 +38,12 @@ function createConfig(format, output) {
     plugin: [
       json(),
       ts({
-        tsconfig: path.resolve(__dirname, 'tsconfig.json')
+        tsconfig: path.resolve(__dirname, 'tsconfig.json'),
+        tsconfigOverride: {
+          compilerOptions: {
+            declaration: false
+          }
+        }
       }),
       node_resolve()
     ]

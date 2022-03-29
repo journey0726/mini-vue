@@ -7,7 +7,7 @@ export function effect(fn, options: any = {}) {
 }
 
 let uid = 0
-let activeEffect   // 当前正在调用的effect
+let activeEffect: any    // 当前正在调用的effect
 const effectStack = []   //防止effect 嵌套出现问题
 function createReactiveEffect(fn, options) {
   const effect = function reactiveEffect() {
@@ -30,7 +30,23 @@ function createReactiveEffect(fn, options) {
   return effect
 }
 
+const targetMap = new WeakMap()
 export function track(target, type, key) {
+  if (activeEffect === undefined) {
+    return
+  }
+  let depsMap = targetMap.get(target)
+  if (!depsMap) {
+    targetMap.set(target, depsMap = new Map())
+  }
+  let dep = depsMap.get(key)
+  if (!dep) {
+    depsMap.set(key, dep = new Set())
+  }
+  if (!dep.has(activeEffect)) {
+    dep.add(activeEffect)
+  }
+  console.log(targetMap);
 
 }
 
