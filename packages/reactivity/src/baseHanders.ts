@@ -1,4 +1,6 @@
 import { extend, isObject } from '@vue/share';
+import { track } from './effect';
+import { TrackOpTypes } from './operators';
 import { readonly, reactive } from './reactive';
 
 const get = createGetter()
@@ -40,6 +42,7 @@ function createGetter(isReadonly = false, isShallow = false) {
     const res = Reflect.get(target, key, receiver)
     if (!isReadonly) {
       //收集依赖
+      track(target, TrackOpTypes.GET, key)
     }
     if (isShallow) {
       return res
