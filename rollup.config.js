@@ -38,12 +38,7 @@ function createConfig(format, output) {
     plugin: [
       json(),
       ts({
-        tsconfig: path.resolve(__dirname, 'tsconfig.json'),
-        tsconfigOverride: {
-          compilerOptions: {
-            declaration: false
-          }
-        }
+        tsconfig: path.resolve(__dirname, 'tsconfig.json')
       }),
       node_resolve()
     ]
