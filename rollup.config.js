@@ -14,7 +14,7 @@ const pkg = require(resolve('package.json'))
 
 const name = path.basename(packageDir)
 
-const outputConfig = {
+const outputConfigs = {
   'esm': {
     file: resolve(`dist/${name}.esm-builder.js`),
     format: 'es'
@@ -35,7 +35,7 @@ function createConfig(format, output) {
   return {
     input: resolve('src/index.ts'),
     output,
-    plugin: [
+    plugins: [
       json(),
       ts({
         tsconfig: path.resolve(__dirname, 'tsconfig.json')
@@ -48,5 +48,5 @@ function createConfig(format, output) {
 const options = pkg.buildOptions
 
 export default options.formats.map(format => {
-  return createConfig(format, outputConfig[format])
+  return createConfig(format, outputConfigs[format])
 })
