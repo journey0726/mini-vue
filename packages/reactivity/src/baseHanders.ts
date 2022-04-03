@@ -1,7 +1,8 @@
-import { extend, isObject } from '@vue/share';
-import { track } from './effect';
-import { TrackOpTypes } from './operators';
+import { extend, isObject, isArray, isIntegerKey, hasOwn, hasChange } from '@vue/share';
+import { track, trigger } from './effect';
+import { TrackOpTypes, triggerOpTypes } from './operators';
 import { readonly, reactive } from './reactive';
+
 
 const get = createGetter()
 const shallowGet = createGetter(false, true)
@@ -56,7 +57,18 @@ function createGetter(isReadonly = false, isShallow = false) {
 }
 function createSetter(isShallow = false) {
   return function set(target, key, value, receiver) {
+    const oldVal = target[key]
+    let hasKey = isArray(target) && isIntegerKey(key) ? Number(key) < target.length : hasOwn(target, key)
     const res = Reflect.set(target, key, value, receiver)
+    //需要区分是新增还是修改
+
+    //新增
+    if (!hasKey) {
+      trigger(target, triggerOpTypes.ADD, key, value)
+    } else if (hasChange(oldVal, value)) {
+      // 修改
+      trigger(target, triggerOpTypes.SET, key, value, oldVal)
+    }
 
     return res
   }

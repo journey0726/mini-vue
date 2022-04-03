@@ -1,3 +1,6 @@
+import { isArray, isNumber, isIntegerKey } from '@vue/share'
+import { triggerOpTypes } from './operators'
+
 export function effect(fn, options: any = {}) {
   const effect = createReactiveEffect(fn, options)
   if (!options.lazy) {
@@ -50,6 +53,34 @@ export function track(target, type, key) {
 
 }
 
-export function trigger() {
+export function trigger(target, type, key?, value?, oldValue?) {
+  const depsMap = targetMap.get(target)
+  if (!depsMap) {
+    return
+  }
+  let effects = new Set()
+  const add = (effects) => {
+    effects.forEach(effect => {
+      effects.add(effect)
+    })
+  }
+  if (isArray(target) && key === 'length') {
+    depsMap.forEach((dep, key) => {
+      if (key === 'length' || key > value) {
+        add(dep)
+      }
+    })
+  } else {
+    if (key) {
+      add(depsMap.get(key))
+    }
+    switch (type) {
+      case triggerOpTypes.ADD: //新增了一个索引，还需要修改长度
+        if (isArray(target) && isIntegerKey(key)) {
+          add(depsMap.get('length'))
+        }
+    }
+  }
+  effects.forEach((effect: any) => effect())
 
 }
