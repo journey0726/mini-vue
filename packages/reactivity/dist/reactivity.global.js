@@ -54,10 +54,37 @@ var VueReactivity = (function (exports) {
       if (!dep.has(activeEffect)) {
           dep.add(activeEffect);
       }
-      console.log(targetMap);
   }
   function trigger(target, type, key, value, oldValue) {
-      console.log('trigger');
+      const depsMap = targetMap.get(target);
+      if (!depsMap) {
+          return;
+      }
+      let effects = new Set();
+      const add = (e) => {
+          e.forEach(effect => {
+              effects.add(effect);
+          });
+      };
+      if (isArray(target) && key === 'length') {
+          depsMap.forEach((dep, key) => {
+              if (key === 'length' || key > value) {
+                  add(dep);
+              }
+          });
+      }
+      else {
+          if (key) {
+              add(depsMap.get(key));
+          }
+          switch (type) {
+              case 0 /* ADD */: //新增了一个索引，还需要修改长度
+                  if (isArray(target) && isIntegerKey(key)) {
+                      add(depsMap.get('length'));
+                  }
+          }
+      }
+      effects.forEach((effect) => effect());
   }
 
   const get = createGetter();
@@ -109,11 +136,11 @@ var VueReactivity = (function (exports) {
           //需要区分是新增还是修改
           //新增
           if (!hasKey) {
-              trigger();
+              trigger(target, 0 /* ADD */, key, value);
           }
           else if (hasChange(oldVal, value)) {
               // 修改
-              trigger();
+              trigger(target, 1 /* SET */, key, value);
           }
           return res;
       };

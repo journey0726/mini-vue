@@ -49,18 +49,17 @@ export function track(target, type, key) {
   if (!dep.has(activeEffect)) {
     dep.add(activeEffect)
   }
-  console.log(targetMap);
-
 }
 
 export function trigger(target, type, key?, value?, oldValue?) {
   const depsMap = targetMap.get(target)
+
   if (!depsMap) {
     return
   }
   let effects = new Set()
-  const add = (effects) => {
-    effects.forEach(effect => {
+  const add = (e) => {
+    e.forEach(effect => {
       effects.add(effect)
     })
   }

@@ -9,9 +9,18 @@
 </head>
 
 <body>
+  <div id="div"></div>
   <script src="../dist//reactivity.global.js"></script>
   <script>
-    const { reactive } = VueReactivity
+    const { reactive, effect } = VueReactivity
+    let a = reactive({ a: 123 })
+    effect(() => {
+      div.innerHTML = a.a
+      console.log(a.a, '修改');
+    })
+    setTimeout(() => {
+      a.a = 344
+    }, 5000)
   </script>
 </body>
 
