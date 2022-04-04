@@ -172,5 +172,35 @@ function createReactiveObject(target, isReadonly, hander) {
     return proxy;
 }
 
-export { effect, reactive, readonly, shallowReactive, shallowReadonly };
+function ref(value) {
+    if (isRef(value))
+        return value;
+    return new RefImpl(value);
+}
+class RefImpl {
+    __value;
+    __isRef;
+    constructor(value) {
+        this.__value = convert(value);
+        this.__isRef = true;
+    }
+    get value() {
+        track(this, 0 /* ADD */, 'value');
+        return this.__value;
+    }
+    set value(newValue) {
+        if (hasChange(this.__value, newValue)) {
+            this.__value = convert(newValue);
+            trigger(this, 0 /* ADD */, 'value');
+        }
+    }
+}
+function isRef(target) {
+    return !!(target && target.__isRef);
+}
+function convert(target) {
+    return isObject(target) ? reactive(target) : target;
+}
+
+export { effect, reactive, readonly, ref, shallowReactive, shallowReadonly };
 //# sourceMappingURL=reactivity.esm-builder.js.map

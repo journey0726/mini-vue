@@ -176,9 +176,40 @@ function createReactiveObject(target, isReadonly, hander) {
     return proxy;
 }
 
+function ref(value) {
+    if (isRef(value))
+        return value;
+    return new RefImpl(value);
+}
+class RefImpl {
+    __value;
+    __isRef;
+    constructor(value) {
+        this.__value = convert(value);
+        this.__isRef = true;
+    }
+    get value() {
+        track(this, 0 /* ADD */, 'value');
+        return this.__value;
+    }
+    set value(newValue) {
+        if (hasChange(this.__value, newValue)) {
+            this.__value = convert(newValue);
+            trigger(this, 0 /* ADD */, 'value');
+        }
+    }
+}
+function isRef(target) {
+    return !!(target && target.__isRef);
+}
+function convert(target) {
+    return isObject(target) ? reactive(target) : target;
+}
+
 exports.effect = effect;
 exports.reactive = reactive;
 exports.readonly = readonly;
+exports.ref = ref;
 exports.shallowReactive = shallowReactive;
 exports.shallowReadonly = shallowReadonly;
 //# sourceMappingURL=reactivity.cjs.js.map
